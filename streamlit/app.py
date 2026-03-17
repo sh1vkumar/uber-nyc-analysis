@@ -31,8 +31,11 @@ BOROUGH_COLORS = {
 FONT_FAMILY = "'UberMove', 'UberMoveText', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
 PLOTLY_FONT = "UberMove, UberMoveText, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif"
 
+# ── Base directory (resolves paths on Streamlit Cloud) ───────────────────────
+DATA_DIR = Path(__file__).parent
+
 # ── Load logo ────────────────────────────────────────────────────────────────
-LOGO_PATH = Path(__file__).parent / "uber_eats_frony.svg"
+LOGO_PATH = DATA_DIR / "uber_eats_frony.svg"
 LOGO_B64 = base64.b64encode(LOGO_PATH.read_bytes()).decode()
 
 # ── Page config ──────────────────────────────────────────────────────────────
@@ -230,7 +233,7 @@ section[data-testid="stSidebar"] h3 {{
 # ── Load & merge data ────────────────────────────────────────────────────────
 @st.cache_data
 def load_internal_data():
-    raw = pd.read_csv("internal_data_exercise.csv", parse_dates=["order_timestamp", "dropoff_timestamp"])
+    raw = pd.read_csv(DATA_DIR / "internal_data_exercise.csv", parse_dates=["order_timestamp", "dropoff_timestamp"])
     raw["order_week"] = raw["order_timestamp"].dt.to_period("W").dt.start_time
     raw["order_month"] = raw["order_timestamp"].dt.to_period("M").dt.start_time
     raw["order_hour"] = raw["order_timestamp"].dt.hour
@@ -242,8 +245,8 @@ def load_internal_data():
 
 @st.cache_data
 def load_data():
-    agg = pd.read_csv("agg_zip_statistics.csv")
-    dim = pd.read_csv("dim_zipcode.csv")
+    agg = pd.read_csv(DATA_DIR / "agg_zip_statistics.csv")
+    dim = pd.read_csv(DATA_DIR / "dim_zipcode.csv")
 
     agg = agg.rename(columns={"zipcode": "zip_code"})
     dim = dim.rename(columns={"boro": "borough_dim"})
